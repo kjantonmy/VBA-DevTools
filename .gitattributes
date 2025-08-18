@@ -1,0 +1,5 @@
+# CRLF for *.cls and *.bas only
+
+* text=auto
+*.bas text eol=crlf
+*.cls text eol=crlf

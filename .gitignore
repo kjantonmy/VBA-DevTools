@@ -1,0 +1,6 @@
+# Ignore MacOS Finder's hidden file
+.DS_Store
+
+# Ignore temporary Excel files
+~$*
+*/~$*
