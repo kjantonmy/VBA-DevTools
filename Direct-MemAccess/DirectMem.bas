@@ -169,16 +169,6 @@ Private Type SA_PtrMem:     sa As SA_Type1:     m() As LongPtr:     End Type
 #Const MacVBA7 = Mac And VBA7
 #Const Win64_NonMac_NonTwinBasic = Win64 And Mac = 0 And TWINBASIC = 0
 
-    #If MacVBA7 Then
-        Public Declare PtrSafe Sub zMove Lib "/usr/lib/libc.dylib" Alias "memmove" (ByVal DestAddr As LongPtr, ByVal SrcAddr As LongPtr, ByVal Length As LongPtr)
-    #ElseIf TwinBasic_or_VBA7 Then
-        Public Declare PtrSafe Sub zMove Lib "kernel32" Alias "RtlMoveMemory" (ByVal DestAddr As LongPtr, ByVal SrcAddr As LongPtr, ByVal Length As LongPtr)
-    #ElseIf MacVBA6 Then
-        Public PtrSafe Sub zMove Lib "/usr/lib/libc.dylib" Alias "memmove" (ByVal DestAddr As LongPtr, ByVal SrcAddr As LongPtr, ByVal Length As LongPtr)
-    #ElseIf LegacyVBA6 Then
-        Public Declare Sub zMove Lib "kernel32" Alias "RtlMoveMemory" (ByVal DestAddr As LongPtr, ByVal SrcAddr As LongPtr, ByVal Length As LongPtr)
-    #End If
-
 ' Declaring MoveMem for direct API call for Mac/TwinBasic or 32-bit version (except for 64-bit version of MS Office for windows)
 
 #If Enable_MoveMem Then
@@ -190,7 +180,7 @@ Private Type SA_PtrMem:     sa As SA_Type1:     m() As LongPtr:     End Type
     #ElseIf MacVBA6 Then
         Public Declare Sub MoveMem Lib "/usr/lib/libc.dylib" Alias "memmove" (ByVal DestAddr As LongPtr, ByVal SrcAddr As LongPtr, ByVal Length As LongPtr)
     #ElseIf LegacyVBA6 Then
-       Public Declare Sub MoveMem Lib "kernel32" Alias "RtlMoveMemory" (ByVal DestAddr As LongPtr, ByVal SrcAddr As LongPtr, ByVal Length As LongPtr)
+        Public Declare Sub MoveMem Lib "kernel32" Alias "RtlMoveMemory" (ByVal DestAddr As LongPtr, ByVal SrcAddr As LongPtr, ByVal Length As LongPtr)
     #End If
 
 #End If
