@@ -8,42 +8,46 @@ Public Sub Test_Nano_StopWatch()
     Const nElements& = 10 ^ 7
     
     With New Nano_StopWatch
-        Debug.Print
-        Debug.Print "Frequency: "; .Frequency
-        Debug.Print "Overhead: "; .Elapsed_Overhead
-        Debug.Print
+        zDebugPrint
+        zDebugPrint "Frequency: " & .Frequency
+        zDebugPrint "Overhead: " & .Elapsed_Overhead
+        zDebugPrint
         
         .StartWatch
         .StopWatch
         
-        Debug.Print "*** Do nothing"
-        Debug.Print "Elapsed: "; .Elapsed
-        Debug.Print "Elapsed('auto'): "; .Elapsed("auto")
-        Debug.Print
+        zDebugPrint "*** Do nothing"
+        zDebugPrint "Elapsed: " & .Elapsed
+        zDebugPrint "Elapsed('auto'): " & .Elapsed("auto")
+        zDebugPrint
         
+        i = Asc("A")
+
         .StartWatch
             i = Asc("A")
         .StopWatch
         
-        Debug.Print "*** i = Asc('A')"
-        Debug.Print "Elapsed: "; .Elapsed
-        Debug.Print "Elapsed('auto'): "; .Elapsed("auto")
-        Debug.Print
+        zDebugPrint "*** i = Asc('A')"
+        zDebugPrint "Elapsed: " & .Elapsed
+        zDebugPrint "Elapsed('auto'): " & .Elapsed("auto")
+        zDebugPrint
         
+        Dir "c:\*.*"
+
         .StartWatch
             Dir "c:\*.*"
         .StopWatch
         
-        Debug.Print "*** dir 'c:\*.*'"
+        zDebugPrint "*** dir 'c:\*.*'"
             
-        Debug.Print "Elapsed('auto'): "; .Elapsed("auto")
-        Debug.Print "Elapsed('tick'): "; .Elapsed("tick")
-        Debug.Print "Elapsed('ns'): "; .Elapsed("ns")
-'        Debug.Print "Elapsed('탎'): "; .Elapsed("탎")
-        Debug.Print "Elapsed('us'): "; .Elapsed("us")
-        Debug.Print "Elapsed('ms'): "; .Elapsed("ms")
-        Debug.Print "Elapsed('sec'): "; .Elapsed("sec")
-        Debug.Print
+        zDebugPrint "Elapsed('auto'): " & .Elapsed("auto")
+        zDebugPrint "Elapsed('tick'): " & .Elapsed("tick")
+        zDebugPrint "Elapsed('ns'): " & .Elapsed("ns")
+'        zDebugPrint "Elapsed('탎'): " & .Elapsed("탎")
+        zDebugPrint "Elapsed('us'): " & .Elapsed("us")
+        zDebugPrint "Elapsed('ms'): " & .Elapsed("ms")
+        zDebugPrint "Elapsed('sec'): " & .Elapsed("sec")
+        zDebugPrint
         
         ReDim a(1 To nElements)
         
@@ -53,26 +57,34 @@ Public Sub Test_Nano_StopWatch()
             Next
         .StopWatch
         
-        Debug.Print "*** Fill array of "; Format(nElements, "#,##0"); " elements"
+        zDebugPrint "*** Fill array of " & Format(nElements, "#,##0") & " elements"
             
-        Debug.Print
-        Debug.Print "Elapsed: "; .Elapsed
-        Debug.Print "Elapsed_Num: "; .Elapsed_Num
-        Debug.Print "Elapsed('auto'): "; .Elapsed("auto")
+        zDebugPrint
+        zDebugPrint "Elapsed: " & .Elapsed
+        zDebugPrint "Elapsed_Num: " & .Elapsed_Num
+        zDebugPrint "Elapsed('auto'): " & .Elapsed("auto")
 
         .Default_TimeUnit = "ms"
-        Debug.Print
-        Debug.Print "*** Default_TimeUnit = 'ms'"
-        Debug.Print "Elapsed: "; .Elapsed
-        Debug.Print "Elapsed_Num: "; .Elapsed_Num
+        zDebugPrint
+        zDebugPrint "*** Default_TimeUnit = 'ms'"
+        zDebugPrint "Elapsed: " & .Elapsed
+        zDebugPrint "Elapsed_Num: " & .Elapsed_Num
 
 '        .Default_TimeUnit = "탎"
         .Default_TimeUnit = "us"
-        Debug.Print
-        Debug.Print "*** Default_TimeUnit = 'us'"
-        Debug.Print "Elapsed: "; .Elapsed
-        Debug.Print "Elapsed_Num: "; .Elapsed_Num
+        zDebugPrint
+        zDebugPrint "*** Default_TimeUnit = 'us'"
+        zDebugPrint "Elapsed: " & .Elapsed
+        zDebugPrint "Elapsed_Num: " & .Elapsed_Num
 
     End With
     
+End Sub
+
+Private Sub zDebugPrint(Optional ByVal Txt$)
+    #if TwinBasic Then
+        Console.Writeline Txt
+    #else
+        Debug.Print Txt
+    #end if
 End Sub

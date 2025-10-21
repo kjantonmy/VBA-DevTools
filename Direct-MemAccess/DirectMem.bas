@@ -109,7 +109,10 @@ Option Explicit
 ' Define LongPtr type for legacy VBA6
 
 #If VBA7 = 0 And TWINBASIC = 0 Then
-
+    ' This LongPtr type definition is for legacy 32-bit platform only.
+    ' In case this type has been defined somewhere else in another module,
+    '   this definition must be removed to prevent 'ambiguous type' error!
+    
     Public Enum LongPtr ' By default, Enum type value is a Long type
         [_] ' Empty Enum
     End Enum
@@ -405,7 +408,7 @@ Private Type SplitNdxType
              #If Mac_or_VBA6 Then
                 xMoveByRef PtrMem, ByVal Addr, PtrLen
             #ElseIf TWINBASIC Then
-                GetMemPtr PtrMem, Addr
+                GetMemPtr Addr, PtrMem
             #Else
                 Static m As SA_PtrMem: If m.sa.Dims = 0 Then zInit_Link_SA m.sa, PtrLen
                 m.sa.DataRg.Cnt = 1:  m.sa.DataRg.p = Addr
@@ -422,7 +425,7 @@ Private Type SplitNdxType
             #If Mac_or_VBA6 Then
                 xMoveByRef ByVal Addr, NewVal, PtrLen
             #ElseIf TWINBASIC Then
-                PutPtr_ByPtr Addr, PtrMem
+                PutMemPtr Addr, NewVal
             #Else
                 Static m As SA_PtrMem: If m.sa.Dims = 0 Then zInit_Link_SA m.sa, PtrLen
                 m.sa.DataRg.Cnt = 1:  m.sa.DataRg.p = Addr
@@ -689,7 +692,7 @@ Private Type SplitNdxType
             #If Mac_or_VBA6 Then
                 xMoveByRef CurMem, ByVal Addr, CurLen
             #ElseIf TWINBASIC Then
-                GetMem8_Cur Addr, CurMem
+                GetMem8 Addr, CurMem
             #Else
                 Static m As SA_CurMem:   If m.sa.Dims = 0 Then zInit_Link_SA m.sa, CurLen
                 m.sa.DataRg.Cnt = 1:  m.sa.DataRg.p = Addr
@@ -706,7 +709,7 @@ Private Type SplitNdxType
             #If Mac_or_VBA6 Then
                 xMoveByRef ByVal Addr, NewVal, CurLen
             #ElseIf TWINBASIC Then
-                PutMem8_Cur Addr, NewVal
+                PutMem8 Addr, NewVal
             #Else
                 Static m As SA_CurMem:   If m.sa.Dims = 0 Then zInit_Link_SA m.sa, CurLen
                 m.sa.DataRg.Cnt = 1:  m.sa.DataRg.p = Addr

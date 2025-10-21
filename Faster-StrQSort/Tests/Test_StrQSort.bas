@@ -28,16 +28,16 @@ Public Sub Testing_StrQSort( _
     CmpGT = (SortOrder = qsDescending) Or 1 ' -> (1= Ascending, -1= Descending)
 
     Line1 = Arr(1)
-    DebugPrint 1 & "- " & Line1
+    zDebugPrint 1 & "- " & Line1
     
 ' Verify sorted result
     For i = 2 To SrcCnt
         Line2 = Arr(i)
-        DebugPrint i & "- " & Line2
+        zDebugPrint i & "- " & Line2
         Debug.Assert StrComp(Line1, Line2, CmpMethod) <> CmpGT ' Assert Line1 <= line2
         Line1 = Line2
     Next
-    DebugPrint vbCrLf & "*** Testing successful !"
+    zDebugPrint vbCrLf & "*** Testing successful !"
 End Sub
 
 Private Function RandomText$()
@@ -63,7 +63,7 @@ Private Sub Create_RandomText_Array(ByRef Arr$(), Optional ByVal Count&)
     Next
 End Sub
 
-Private Sub DebugPrint(Txt$)
+Private Sub zDebugPrint(Optional ByVal Txt$)
     #if TwinBasic Then
         Console.Writeline Txt
     #else

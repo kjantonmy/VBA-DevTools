@@ -19,7 +19,7 @@ Option Explicit
 #Const Enable_Dbl = 1
 #Const Enable_Date = 1
 
-#If Win64 Or TWINBASIC Then
+#If Win64 Or TwinBasic Then
     #Const Enable_LLong = 1
 #End If
 
@@ -40,12 +40,32 @@ End Sub
 ' Test MoveMem
 ' *****************
 
-Public Sub Test_MoveMem()
+Public Sub Test16k_MoveMem()
+    zTest_MoveMem 16
+End Sub
+
+Public Sub Test32k_MoveMem()
+    zTest_MoveMem 32
+End Sub
+
+Public Sub Test48k_MoveMem()
+    zTest_MoveMem 48
+End Sub
+
+Public Sub Test64k_MoveMem()
+    zTest_MoveMem 64
+End Sub
+
+Public Sub Test80k_MoveMem()
+    zTest_MoveMem 80
+End Sub
+
+Private Sub zTest_MoveMem(ByVal UpTo_k&)
     Const n1k = 1024&
     Const ub& = 256 * n1k, ExtraSpace& = 64 * n1k, HalfExtraSpace = ExtraSpace \ 2
     
     Dim SrcByteArr(0 To ub + 1024) As Byte, DestByteArr(0 To ub + ExtraSpace) As Byte, nBytes&, i&
-    Dim vOffset, OverlapArr, StartByte&, EndByte&, StartOffset&, EndOffset&, LastOffset&
+    Dim vOffset As Variant, OverlapArr As Variant, StartByte&, EndByte&, StartOffset&, EndOffset&, LastOffset&, Start_k&
     
     #If Enable_MoveMem Then
                 
@@ -59,15 +79,19 @@ Public Sub Test_MoveMem()
         
         OverlapArr = Array(1, 4, 8, 16, 32, 64, 128, 256, 1024, 2048, 4096, 8192, 16 * n1k, 32 * n1k)
         
-        Debug.Print "Testing MoveMem:  Number bytes being moved (from .. to ..) ** Gaps (DestAddr - SrcAddr) ..."; vbCrLf
+        zLineOut "Testing MoveMem:  Number bytes being moved (from .. to ..) ** Gaps (DestAddr - SrcAddr) ..." & vbCrLf
         
-        For StartByte = 0 To 96 * n1k Step 1024
-            EndByte = StartByte + 1024 - 1
+        If UpTo_k > 256 Then UpTo_k = 256
+        
+        Start_k = IIf(UpTo_k <= 16, 0, UpTo_k - 16)
+        
+        For StartByte = Start_k * n1k To UpTo_k * n1k Step n1k
+            EndByte = StartByte + n1k - 1
             
             StartOffset = IIf(StartByte <= 0, 1, 8)
             EndOffset = EndByte + 1
             
-            Debug.Print "  from"; StartByte; "to"; EndByte; " ** Gaps:";
+            zOut "  from ", StartByte, " to ", EndByte, "  ** Gaps:"
                         
             LastOffset = 0
             For Each vOffset In OverlapArr
@@ -81,7 +105,7 @@ Public Sub Test_MoveMem()
                 End If
                 
                 If (vOffset >= StartOffset And vOffset <= EndOffset) Then
-                    Debug.Print vOffset; " ";
+                    zOut vOffset, " "
                     DoEvents
                     
                     For nBytes = StartByte To EndByte
@@ -108,9 +132,9 @@ Public Sub Test_MoveMem()
                 End If
             Next
             
-            Debug.Print "   ... completed"
+            zLineOut "   ... completed"
         Next
-        Debug.Print
+        zLineOut
         zSuccess "Test_MoveMem"
         
     #End If
@@ -544,13 +568,13 @@ End Sub
 ' **********************
 
 Public Sub Test_LLongAccess()
-    Dim mDestLLong As LongLong, mSrcLLong As LongLong
-
-    mDestAddr = VarPtr(mDestLLong)
-    mSrcAddr = VarPtr(mSrcLLong)
-    
-    #If Enable_LLong And (Win64 Or TWINBASIC) Then
+    #If Enable_LLong And (Win64 Or TwinBasic) Then
         
+        Dim mDestLLong As LongLong, mSrcLLong As LongLong
+
+        mDestAddr = VarPtr(mDestLLong)
+        mSrcAddr = VarPtr(mSrcLLong)
+    
         #If Enable_PropertyGet Then
             
             mDestLLong = 0
@@ -593,12 +617,43 @@ Public Sub Test_LLongAccess()
         
 End Sub
 
-Private Sub zAssert(Dest, src, Optional ByVal Text$)
-    If Dest = src Then Exit Sub
-    Debug.Print "*** "; Text; " ***  -> Dest = "; Dest; " ,  Src ="; src
-    Debug.Assert Dest = src
+Private Sub zAssert(Dest As Variant, Src As Variant, Optional ByVal Text$)
+    If Dest = Src Then Exit Sub
+    zLineOut "*** " & Text & " ***  -> Dest = " & Dest & " ,  Src =" & Src
+    Debug.Assert Dest = Src
 End Sub
 
 Private Sub zSuccess(ByVal Text$)
-    Debug.Print "*** "; Text; " ***  -> successful"
+    zLineOut "*** " & Text & " ***  -> successful"
+End Sub
+
+#If TwinBasic Then
+    Private DeclareWide PtrSafe Function GetStdHandle Lib "kernel32" (ByVal nStdHandle As Long) As LongPtr
+    Private DeclareWide PtrSafe Function WriteConsoleW Lib "kernel32" (ByVal hConsoleOutput As LongPtr, ByVal lpBuffer As LongPtr, ByVal nNumberOfCharsToWrite As Long, ByRef lpNumberOfCharsWritten As Long, ByVal lpReserved As LongPtr) As Long
+
+    Private Sub zWriteOut(ByVal Txt$)
+        Static mStdout As LongPtr
+        Dim WrittenCount&
+        If mStdout = 0 Then mStdout = GetStdHandle(-11)
+        WriteConsoleW mStdout, StrPtr(Txt), Len(Txt), WrittenCount, 0
+    End Sub
+#Else
+    Private Sub zWriteOut(ByVal Txt$)
+        Debug.Print Txt;
+    End Sub
+#End If
+
+Private Sub zOut(ParamArray Args() As Variant)
+    Dim v As Variant
+    For Each v In Args
+        zWriteOut v
+    Next
+End Sub
+    
+Private Sub zLineOut(ParamArray Args() As Variant)
+    Dim v As Variant
+    For Each v In Args
+        zWriteOut v
+    Next
+    zWriteOut vbCrLf
 End Sub
