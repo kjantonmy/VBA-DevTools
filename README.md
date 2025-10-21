@@ -4,7 +4,7 @@ This package contains 1 class module(Nano_StopWatch.cls) and 2 standard modules(
 
 ### Nano_StopWatch.cls (Nano Seconds StopWatch)
 
-* This class provides stop watch functionality with nano seconds and micro seconds precision.
+* This class provides stop watch functionality with nanoseconds and microseconds precision.
 * It is built around **_`QueryPerformanceCounter`_** API.
 
 
